@@ -85,6 +85,12 @@ end $$;
 create trigger profiles_protect_role
   before update on public.profiles for each row execute function public.protect_role();
 
+-- Le funzioni interne non devono essere richiamabili dall'esterno
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+revoke execute on function public.protect_role() from public, anon, authenticated;
+revoke execute on function public.my_role() from public, anon;
+grant execute on function public.my_role() to authenticated;
+
 -- ---------- sicurezza (Row Level Security) ----------
 alter table public.profiles enable row level security;
 alter table public.bars enable row level security;
