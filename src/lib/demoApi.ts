@@ -14,6 +14,9 @@ interface DB {
   session: string | null;
 }
 
+// copia profonda compatibile anche con browser/telefoni più vecchi
+const clone = <T>(x: T): T => JSON.parse(JSON.stringify(x));
+
 const KEY = 'giovedi-di-max:demo:v2';
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -56,7 +59,7 @@ function seed(): DB {
     r('b3', 'giulia', [4, 3, 3, 4, 4, 3]),
     r('b3', 'marco', [5, 4, 5, 5, 4, 4]),
   ];
-  return { profiles, bars, ratings, settings: structuredClone(DEFAULT_SETTINGS), session: null };
+  return { profiles, bars, ratings, settings: clone(DEFAULT_SETTINGS), session: null };
 }
 
 function load(): DB {
@@ -118,7 +121,7 @@ export function createDemoApi(): Api {
       emit();
     },
     async listProfiles() {
-      return structuredClone(db.profiles);
+      return clone(db.profiles);
     },
     async setRole(id, role) {
       if (need().role !== 'admin') throw new Error('Solo l’admin può cambiare i ruoli');
@@ -144,7 +147,7 @@ export function createDemoApi(): Api {
       save();
     },
     async listBars() {
-      return structuredClone(db.bars);
+      return clone(db.bars);
     },
     async addBar(input, scheduled_date) {
       const u = need();
@@ -167,7 +170,7 @@ export function createDemoApi(): Api {
       save();
     },
     async listRatings() {
-      return structuredClone(db.ratings);
+      return clone(db.ratings);
     },
     async saveRating(bar_id, scores, comment) {
       const u = need();
@@ -177,7 +180,7 @@ export function createDemoApi(): Api {
       save();
     },
     async getSettings() {
-      return structuredClone(db.settings);
+      return clone(db.settings);
     },
     async saveSettings(s) {
       if (need().role !== 'admin') throw new Error('Solo l’admin può cambiare i pesi');
