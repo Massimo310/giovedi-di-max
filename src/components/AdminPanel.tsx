@@ -20,10 +20,10 @@ export default function AdminPanel({ onOpen }: { onOpen: (id: string) => void })
         <h2>Peso dei voti</h2>
         <p className="muted">Quanto conta il voto di ciascun gruppo nella media.</p>
         <div className="weights">
-          {(['admin', 'fedelissimo', 'occasionale'] as const).map((r) => (
+          {(['admin', 'cofounder', 'fedelissimo', 'occasionale'] as const).map((r) => (
             <label key={r}>
               {ROLE_LABEL[r]}
-              <input type="number" min={0} max={10} step={0.5} value={draft.weights[r]} onChange={(e) => setW(r, Number(e.target.value))} />
+              <input type="number" min={0} max={10} step={0.5} value={draft.weights[r] ?? 2} onChange={(e) => setW(r, Number(e.target.value))} />
             </label>
           ))}
           <label>

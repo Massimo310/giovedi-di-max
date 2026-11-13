@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { api, USERNAME_RE } from '../lib/api';
-import { ROLE_DESC, ROLE_LABEL, type Profile, type Role } from '../lib/types';
+import { ROLES, ROLE_DESC, ROLE_LABEL, type Profile, type Role } from '../lib/types';
 import { useStore } from '../store';
-
-const ROLES: Role[] = ['admin', 'fedelissimo', 'occasionale', 'ospite'];
 
 /** Genera una password facile da dettare: parola birrosa + numero */
 function suggestPassword() {
@@ -17,7 +15,7 @@ export default function Crew() {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState(suggestPassword);
-  const [role, setRole] = useState<Role>('fedelissimo');
+  const [role, setRole] = useState<Role>('cofounder');
   const [created, setCreated] = useState<{ username: string; password: string } | null>(null);
   const [resetFor, setResetFor] = useState<{ p: Profile; pw: string } | null>(null);
 

@@ -22,7 +22,7 @@ export default function Leaderboard({ onOpen }: { onOpen: (id: string) => void }
   return (
     <section className="board">
       <p className="muted board-note">
-        Media pesata per ruolo (Fedelissimi ×{settings.weights.fedelissimo}, Occasionali ×{settings.weights.occasionale})
+        Media pesata per ruolo (Co-founder ×{settings.weights.cofounder ?? 2}, Fedelissimi ×{settings.weights.fedelissimo}, Occasionali ×{settings.weights.occasionale})
         {settings.foosball_bonus > 0 && <> · Biliardino +{settings.foosball_bonus}</>}
       </p>
       {scored.map((s, i) => (

@@ -4,7 +4,6 @@ import type { Profile } from '../lib/types';
 import { ROLE_DESC, ROLE_LABEL } from '../lib/types';
 import { useStore } from '../store';
 import Bubbles from './Bubbles';
-import Cap from './Cap';
 
 export default function Login() {
   const { run, error } = useStore();
@@ -25,8 +24,7 @@ export default function Login() {
     <div className="login">
       <Bubbles variant="hero" count={30} />
       <div className="login-card card">
-        <Cap size={72} />
-        <span className="kicker">Ogni giovedì · un bar nuovo</span>
+        <span className="beer-logo big" aria-hidden>🍺</span>
         <h1 className="logo big">Il Giovedì di Max</h1>
         <p className="muted">Ogni giovedì un bar nuovo. Voi votate, la schiuma decide.</p>
 

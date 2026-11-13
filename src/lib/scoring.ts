@@ -12,7 +12,7 @@ export interface BarScore {
 
 export function weightOf(role: Role | undefined, s: Settings): number {
   if (!role || role === 'ospite') return 0;
-  return s.weights[role] ?? 1;
+  return s.weights[role] ?? (role === 'occasionale' ? 1 : 2);
 }
 
 /**

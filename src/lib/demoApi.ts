@@ -17,7 +17,7 @@ interface DB {
 // copia profonda compatibile anche con browser/telefoni più vecchi
 const clone = <T>(x: T): T => JSON.parse(JSON.stringify(x));
 
-const KEY = 'giovedi-di-max:demo:v2';
+const KEY = 'giovedi-di-max:demo:v3';
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 function thursdayOffset(weeks: number) {
@@ -29,7 +29,7 @@ function thursdayOffset(weeks: number) {
 function seed(): DB {
   const profiles: Profile[] = [
     { id: 'max', username: 'max', name: 'Max', role: 'admin' },
-    { id: 'luca', username: 'luca', name: 'Luca', role: 'fedelissimo' },
+    { id: 'luca', username: 'luca', name: 'Luca', role: 'cofounder' },
     { id: 'giulia', username: 'giulia', name: 'Giulia', role: 'fedelissimo' },
     { id: 'marco', username: 'marco', name: 'Marco', role: 'occasionale' },
     { id: 'ospite', username: 'ospite', name: 'Ospite curioso', role: 'ospite' },

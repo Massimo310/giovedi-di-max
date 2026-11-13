@@ -17,13 +17,17 @@ export function thursdayOnOrAfter(d: Date): Date {
   return r;
 }
 
+/** Il primo giovedì del nuovo giro di bar (dopo la chiusura del Bar Bruto) */
+export const START_DATE = '2026-12-03';
+
 /**
  * Programmazione automatica: il nuovo bar va nel primo giovedì libero
- * a partire da oggi (incluso, se oggi è giovedì).
+ * a partire da oggi (o dal 3 dicembre, se è prima).
  */
 export function nextFreeThursday(bars: Bar[], from = new Date()): string {
   const taken = new Set(bars.map((b) => b.scheduled_date).filter(Boolean));
-  let d = thursdayOnOrAfter(from);
+  const start = fromISO(START_DATE);
+  let d = thursdayOnOrAfter(from < start ? start : from);
   while (taken.has(toISO(d))) d.setDate(d.getDate() + 7);
   return toISO(d);
 }

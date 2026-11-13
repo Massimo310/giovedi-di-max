@@ -32,7 +32,7 @@ export interface Api {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  weights: { admin: 2, fedelissimo: 2, occasionale: 1 },
+  weights: { admin: 2, cofounder: 2, fedelissimo: 2, occasionale: 1 },
   foosball_bonus: 1,
 };
 

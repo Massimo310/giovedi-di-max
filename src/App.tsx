@@ -10,7 +10,7 @@ import AdminPanel from './components/AdminPanel';
 import BarDetail from './components/BarDetail';
 import Bubbles from './components/Bubbles';
 import AccountModal from './components/AccountModal';
-import Cap from './components/Cap';
+
 
 type Tab = 'calendario' | 'classifica' | 'admin';
 
@@ -29,17 +29,15 @@ function Shell() {
         <Bubbles variant="hero" count={18} />
         <div className="topbar-inner">
           <div className="brand">
-            <Cap />
-            <div>
-              <span className="kicker">Ogni giovedì · un bar nuovo</span>
-              <h1 className="logo">Il Giovedì di Max</h1>
-            </div>
+            <span className="beer-logo" aria-hidden>🍺</span>
+            <h1 className="logo">Il Giovedì di Max</h1>
           </div>
           <div className="who">
             <span className={`badge role-${me.role}`}>{ROLE_LABEL[me.role]}</span>
-            <button className="who-name" onClick={() => setAccount(true)} title="Il mio account">
+            <button className="who-name" onClick={() => setAccount(true)} title="Profilo e password">
               <span className="avatar">{me.name.slice(0, 1).toUpperCase()}</span>
               <span className="who-label">{me.name}</span>
+              <span className="who-key" aria-hidden>🔑</span>
             </button>
             <button className="btn on-dark sm" onClick={() => api.signOut()}>Esci</button>
           </div>
@@ -79,8 +77,7 @@ function Shell() {
       {account && <AccountModal onClose={() => setAccount(false)} />}
       {openBar && <BarDetail barId={openBar} onClose={() => setOpenBar(null)} />}
       <footer className="footer">
-        <Cap size={28} />
-        <span>Il Giovedì di Max · bevete responsabilmente, votate senza pietà</span>
+        <span>Il Bar Bruto chiude, il Giovedì di Max no.<br />Cambiano i banconi, resta la compagnia. 🍻</span>
       </footer>
     </>
   );

@@ -6,7 +6,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const LOGIN_DOMAIN = 'giovedi-di-max.example.com'; // deve combaciare con src/lib/api.ts
 const USERNAME_RE = /^[a-z0-9._-]{3,30}$/;
-const ROLES = ['admin', 'fedelissimo', 'occasionale', 'ospite'];
+const ROLES = ['admin', 'cofounder', 'fedelissimo', 'occasionale', 'ospite'];
 
 const cors = {
   'Access-Control-Allow-Origin': '*',

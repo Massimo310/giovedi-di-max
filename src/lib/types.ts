@@ -1,4 +1,7 @@
-export type Role = 'admin' | 'fedelissimo' | 'occasionale' | 'ospite';
+export type Role = 'admin' | 'cofounder' | 'fedelissimo' | 'occasionale' | 'ospite';
+
+/** Ordine dei ruoli, dal più alto al più basso */
+export const ROLES: Role[] = ['admin', 'cofounder', 'fedelissimo', 'occasionale', 'ospite'];
 
 export interface Profile {
   id: string;
@@ -40,7 +43,8 @@ export interface NewBar {
 }
 
 export const ROLE_LABEL: Record<Role, string> = {
-  admin: 'Fondatore',
+  admin: 'Founder',
+  cofounder: 'Co-founder',
   fedelissimo: 'Fedelissimo',
   occasionale: 'Occasionale',
   ospite: 'Ospite',
@@ -48,6 +52,7 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 export const ROLE_DESC: Record<Role, string> = {
   admin: 'Gestisce calendario, bar e compagnia',
+  cofounder: 'Il nucleo storico: propone bar e vota, voto pieno',
   fedelissimo: 'Viene spesso: il suo voto pesa di più',
   occasionale: 'Viene ogni tanto: voto con peso ridotto',
   ospite: 'Può solo guardare classifica e calendario',

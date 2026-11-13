@@ -3,7 +3,7 @@
 --  Da incollare in Supabase > SQL Editor > New query > Run
 -- =====================================================================
 
-create type public.user_role as enum ('admin', 'fedelissimo', 'occasionale', 'ospite');
+create type public.user_role as enum ('admin', 'cofounder', 'fedelissimo', 'occasionale', 'ospite');
 
 -- Profili utente (uno per account)
 create table public.profiles (
@@ -42,7 +42,7 @@ create table public.ratings (
 -- Impostazioni (una sola riga)
 create table public.settings (
   id int primary key default 1 check (id = 1),
-  weights jsonb not null default '{"admin":2,"fedelissimo":2,"occasionale":1}',
+  weights jsonb not null default '{"admin":2,"cofounder":2,"fedelissimo":2,"occasionale":1}',
   foosball_bonus numeric not null default 1
 );
 insert into public.settings (id) values (1);
@@ -109,7 +109,7 @@ create policy "modifica profilo" on public.profiles for update to authenticated
 
 -- Bar: chi non è ospite può proporre, solo l'admin modifica/elimina
 create policy "proponi bar" on public.bars for insert to authenticated
-  with check (public.my_role() in ('admin', 'fedelissimo', 'occasionale') and added_by = auth.uid());
+  with check (public.my_role() in ('admin', 'cofounder', 'fedelissimo', 'occasionale') and added_by = auth.uid());
 create policy "admin modifica bar" on public.bars for update to authenticated using (public.my_role() = 'admin');
 create policy "admin elimina bar" on public.bars for delete to authenticated using (public.my_role() = 'admin');
 
@@ -117,7 +117,7 @@ create policy "admin elimina bar" on public.bars for delete to authenticated usi
 create policy "vota" on public.ratings for insert to authenticated
   with check (
     user_id = auth.uid()
-    and public.my_role() in ('admin', 'fedelissimo', 'occasionale')
+    and public.my_role() in ('admin', 'cofounder', 'fedelissimo', 'occasionale')
     and exists (select 1 from public.bars b where b.id = bar_id and b.scheduled_date <= current_date)
   );
 create policy "cambia voto" on public.ratings for update to authenticated

@@ -5,18 +5,19 @@ in automatico, e dopo la serata tutti votano. La schiuma decide.
 
 ## Cosa fa
 
-- **Calendario dei giovedì**: chi propone un bar lo vede programmato automaticamente nel primo giovedì libero.
+- **Calendario dei giovedì**: chi propone un bar lo vede programmato automaticamente nel primo giovedì libero (a partire dal 3 dicembre 2026, `START_DATE` in `src/lib/dates.ts`).
 - **Voti da 1 a 10 boccali** per categoria: Prezzo, Location, Intrattenimento, Mood, Personale, Qualità birra.
-- **Bonus biliardino ⚽**: il fondatore segna i bar col biliardino, che prendono punti extra (valore regolabile).
+- **Bonus biliardino ⚽**: il founder segna i bar col biliardino, che prendono punti extra (valore regolabile).
 - **Voti pesati per ruolo** (pesi regolabili dalla tab Gestione):
   | Ruolo | Può fare | Peso voto (default) |
   |---|---|---|
-  | Fondatore | tutto: calendario, bar, account, pesi | ×2 |
+  | Founder | tutto: calendario, bar, account, pesi | ×2 |
+  | Co-founder | proporre bar, votare | ×2 |
   | Fedelissimo | proporre bar, votare | ×2 |
   | Occasionale | proporre bar, votare | ×1 |
   | Ospite | solo guardare | – |
 - **Classifica** con media pesata + bonus.
-- **Account creati dal fondatore**: niente registrazione libera. Il fondatore crea nome utente e
+- **Account creati dal fondatore**: niente registrazione libera. Il founder crea nome utente e
   password per ogni amico dalla tab Gestione; ognuno può poi cambiarsi la password dal profilo (👤).
 
 ## Modalità demo vs online
@@ -36,9 +37,9 @@ Per usarla davvero serve **Supabase** (gratuito), che fornisce database e login.
 
 ### 3. Chiudi le iscrizioni libere
 *Authentication → Sign In / Providers*: disattiva **Allow new users to sign up**
-(gli account li crea solo il fondatore).
+(gli account li crea solo il founder).
 
-### 4. Il tuo account da fondatore
+### 4. Il tuo account da founder
 1. *Authentication → Users → Add user → Create new user*
    - email: `max@giovedi-di-max.example.com` (così entri col nome utente **max**)
    - password a scelta, spunta **Auto Confirm User**
