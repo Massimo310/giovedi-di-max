@@ -10,9 +10,9 @@ import AdminPanel from './components/AdminPanel';
 import BarDetail from './components/BarDetail';
 import Bubbles from './components/Bubbles';
 import AccountModal from './components/AccountModal';
+import HowToVote from './components/HowToVote';
 
-
-type Tab = 'calendario' | 'classifica' | 'admin';
+type Tab = 'calendario' | 'classifica' | 'regole' | 'admin';
 
 function Shell() {
   const { me, loading, error, setError } = useStore();
@@ -45,6 +45,7 @@ function Shell() {
         <nav className="tabs">
           <button className={tab === 'calendario' ? 'on' : ''} onClick={() => setTab('calendario')}>Calendario</button>
           <button className={tab === 'classifica' ? 'on' : ''} onClick={() => setTab('classifica')}>Classifica</button>
+          <button className={tab === 'regole' ? 'on' : ''} onClick={() => setTab('regole')}>Come si vota</button>
           {isAdmin(me.role) && (
             <button className={tab === 'admin' ? 'on' : ''} onClick={() => setTab('admin')}>Gestione</button>
           )}
@@ -71,6 +72,7 @@ function Shell() {
           </>
         )}
         {tab === 'classifica' && <Leaderboard onOpen={setOpenBar} />}
+        {tab === 'regole' && <HowToVote />}
         {tab === 'admin' && isAdmin(me.role) && <AdminPanel onOpen={setOpenBar} />}
       </main>
 

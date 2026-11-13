@@ -296,6 +296,8 @@ code { font-family: ui-monospace, monospace; background: var(--ice); border: 1px
 @media (max-width: 720px) {
   .topbar { padding-top: 1rem; }
   .beer-logo { font-size: 2rem; }
+  .tabs { gap: 0; margin-left: -6px; }
+  .tabs button { padding: 0.8rem 0.6rem; font-size: 0.82rem; letter-spacing: 0.05em; }
   .logo { font-size: 1.9rem; }
   .next-up { grid-template-columns: 1fr 1fr; }
   .next-card.hero { grid-column: 1 / -1; }
@@ -308,3 +310,31 @@ code { font-family: ui-monospace, monospace; background: var(--ice); border: 1px
   .cat { grid-template-columns: 7.5rem 1fr 2.4rem; font-size: 0.85rem; }
   .detail-head h2 { font-size: 1.6rem; }
 }
+
+/* ----- come si vota ----- */
+.howto { display: grid; gap: 1.1rem; }
+.howto-intro p { margin: 0 0 1rem; line-height: 1.55; }
+.scale { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; font-size: 0.9rem; color: var(--muted); }
+.scale li { display: flex; align-items: center; gap: 0.45rem; }
+.scale-n { display: inline-grid; place-items: center; min-width: 2.6rem; padding: 0.15rem 0.45rem; border-radius: 8px; font-family: var(--display); font-weight: 700; font-size: 0.9rem; }
+.scale-n.low { background: #fdecea; color: var(--danger); }
+.scale-n.mid { background: #fff4d6; color: #7a5a00; }
+.scale-n.good { background: #e4f4ea; color: var(--green-700); }
+.scale-n.top { background: var(--green-700); color: var(--white); }
+.howto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.howto-cat p { margin: 0 0 0.6rem; line-height: 1.5; }
+.howto-cat-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+.howto-cat-head h3 { margin: 0; font-size: 1.35rem; color: var(--green-800); }
+.howto-emoji { font-size: 1.8rem; }
+.howto-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green-600); margin: 0.8rem 0 0.3rem; }
+.howto-list { margin: 0 0 0.9rem; padding-left: 1.1rem; color: var(--ink); line-height: 1.6; font-size: 0.92rem; }
+.howto-range { display: grid; gap: 0.4rem; padding-top: 0.8rem; border-top: 1px solid var(--ice); font-size: 0.9rem; }
+.howto-range div { display: flex; align-items: center; gap: 0.6rem; }
+.howto-steps { margin: 0; padding-left: 1.2rem; line-height: 1.7; }
+.weights-list { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; }
+.weights-list li { display: flex; align-items: center; gap: 0.45rem; }
+.howto-special { background: #fff8e3; border-color: #f3dd98; }
+.howto-special h2 { color: #6b5310; }
+.howto-special p { margin: 0; line-height: 1.55; }
+.vote-label { display: grid; gap: 0.1rem; }
+.vote-label small { font-size: 0.78rem; font-weight: 400; }

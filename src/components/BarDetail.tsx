@@ -101,7 +101,10 @@ export default function BarDetail({ barId, onClose }: { barId: string; onClose: 
             <h3>{mine ? 'Il tuo voto (puoi cambiarlo)' : 'Dai il tuo voto'}</h3>
             {CATEGORIES.map((c) => (
               <div key={c.key} className="vote-row">
-                <span>{c.emoji} {c.label}</span>
+                <span className="vote-label">
+                  {c.emoji} {c.label}
+                  <small className="muted">{c.description}</small>
+                </span>
                 <MugRating value={scores[c.key] ?? 0} onChange={(v) => { setScores({ ...scores, [c.key]: v }); setSaved(false); }} />
               </div>
             ))}
