@@ -37,5 +37,8 @@ const fmtShort = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'shor
 export const prettyDate = (iso: string | null) => (iso ? fmt.format(fromISO(iso)) : 'Da programmare');
 export const shortDate = (iso: string | null) => (iso ? fmtShort.format(fromISO(iso)) : '—');
 
-/** Il bar è "visitato" (votabile) se la serata è oggi o nel passato */
+/** La serata è oggi o nel passato */
 export const isVisited = (b: Bar) => !!b.scheduled_date && b.scheduled_date <= todayISO();
+
+/** Si può votare: serata già fatta e non è una serata speciale senza voto */
+export const isRateable = (b: Bar) => b.votable !== false && isVisited(b);

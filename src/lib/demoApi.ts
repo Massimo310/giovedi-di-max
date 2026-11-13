@@ -17,7 +17,7 @@ interface DB {
 // copia profonda compatibile anche con browser/telefoni più vecchi
 const clone = <T>(x: T): T => JSON.parse(JSON.stringify(x));
 
-const KEY = 'giovedi-di-max:demo:v3';
+const KEY = 'giovedi-di-max:demo:v4';
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 function thursdayOffset(weeks: number) {
@@ -36,14 +36,14 @@ function seed(): DB {
   ];
   const now = new Date().toISOString();
   const mk = (id: string, name: string, address: string, w: number, foos: boolean, by: string): Bar => ({
-    id, name, address, notes: '', added_by: by, scheduled_date: thursdayOffset(w), has_foosball: foos, created_at: now,
+    id, name, address, notes: '', added_by: by, scheduled_date: thursdayOffset(w), has_foosball: foos, votable: true, created_at: now,
   });
   const bars = [
     mk('b1', 'Il Luppolo Ribelle', 'Via dei Mastri 12', -3, true, 'max'),
     mk('b2', 'Schiuma & Co.', 'Piazza Garibaldi 4', -2, false, 'luca'),
     mk('b3', 'The Hoppy Owl', 'Corso Italia 88', -1, true, 'giulia'),
-    mk('b4', 'Birrificio del Porto', 'Lungomare 3', 0, false, 'marco'),
-    mk('b5', 'La Botte Piena', 'Vicolo Stretto 7', 1, false, 'max'),
+    { ...mk('b4', 'Bar Bruto', '', 0, false, 'max'), votable: false, notes: 'Serata speciale' },
+    { ...mk('b5', 'Bar Bruto', '', 1, false, 'max'), votable: false, notes: 'L’ultima sera al Bruto' },
   ];
   const r = (bar_id: string, user_id: string, vals: number[], comment = ''): Rating => ({
     bar_id, user_id, comment, updated_at: now,
@@ -152,7 +152,7 @@ export function createDemoApi(): Api {
     async addBar(input, scheduled_date) {
       const u = need();
       if (u.role === 'ospite') throw new Error('Gli ospiti non possono aggiungere bar');
-      const bar: Bar = { ...input, id: uid(), added_by: u.id, scheduled_date, has_foosball: false, created_at: new Date().toISOString() };
+      const bar: Bar = { ...input, id: uid(), added_by: u.id, scheduled_date, has_foosball: false, votable: true, created_at: new Date().toISOString() };
       db.bars.push(bar);
       save();
       return bar;

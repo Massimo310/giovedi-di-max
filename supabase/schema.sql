@@ -23,6 +23,7 @@ create table public.bars (
   added_by uuid references public.profiles on delete set null,
   scheduled_date date unique,
   has_foosball boolean not null default false,
+  votable boolean not null default true, -- false = serata speciale, niente voti
   created_at timestamptz not null default now()
 );
 
@@ -118,7 +119,7 @@ create policy "vota" on public.ratings for insert to authenticated
   with check (
     user_id = auth.uid()
     and public.my_role() in ('admin', 'cofounder', 'fedelissimo', 'occasionale')
-    and exists (select 1 from public.bars b where b.id = bar_id and b.scheduled_date <= current_date)
+    and exists (select 1 from public.bars b where b.id = bar_id and b.votable and b.scheduled_date <= current_date)
   );
 create policy "cambia voto" on public.ratings for update to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid() and public.my_role() <> 'ospite');

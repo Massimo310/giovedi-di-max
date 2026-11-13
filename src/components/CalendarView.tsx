@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { isVisited, prettyDate, toISO, todayISO } from '../lib/dates';
+import { isRateable, isVisited, prettyDate, toISO, todayISO } from '../lib/dates';
 import { fmtScore, scoreBar } from '../lib/scoring';
 import { useStore } from '../store';
 
@@ -49,6 +49,7 @@ export default function CalendarView({ onOpen }: { onOpen: (id: string) => void 
               <span className="next-when">{i === 0 ? (b.scheduled_date === today ? 'STASERA' : 'PROSSIMO GIOVEDÌ') : prettyDate(b.scheduled_date)}</span>
               <strong>{b.name}</strong>
               {i === 0 && <span className="muted">{prettyDate(b.scheduled_date)}</span>}
+              {b.votable === false && <span className="chip special">Serata speciale</span>}
               {b.has_foosball && <span className="chip foos">⚽ Biliardino</span>}
             </button>
           ))}
@@ -76,9 +77,9 @@ export default function CalendarView({ onOpen }: { onOpen: (id: string) => void 
                 {items.map((b) => {
                   const s = scoreBar(b, ratings, profiles, settings);
                   return (
-                    <button key={b.id} className={`cal-bar ${isVisited(b) ? 'past' : ''}`} onClick={() => onOpen(b.id)} title={b.name}>
+                    <button key={b.id} className={`cal-bar ${b.votable === false ? 'special' : isVisited(b) ? 'past' : ''}`} onClick={() => onOpen(b.id)} title={b.name}>
                       <span className="cal-bar-name">{b.name}</span>
-                      {isVisited(b) && s.total !== null && <span className="cal-bar-score">{fmtScore(s.total)}</span>}
+                      {isRateable(b) && s.total !== null && <span className="cal-bar-score">{fmtScore(s.total)}</span>}
                     </button>
                   );
                 })}

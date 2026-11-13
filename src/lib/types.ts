@@ -18,6 +18,8 @@ export interface Bar {
   added_by: string | null;
   scheduled_date: string | null; // YYYY-MM-DD
   has_foosball: boolean;
+  /** false = serata speciale (es. Bar Bruto): niente voti, niente classifica */
+  votable: boolean;
   created_at: string;
 }
 

@@ -1,5 +1,5 @@
 import { CATEGORIES } from '../lib/categories';
-import { isVisited, shortDate } from '../lib/dates';
+import { isRateable, shortDate } from '../lib/dates';
 import { fmtScore, scoreBar } from '../lib/scoring';
 import { useStore } from '../store';
 import Pint from './Pint';
@@ -7,7 +7,7 @@ import Pint from './Pint';
 export default function Leaderboard({ onOpen }: { onOpen: (id: string) => void }) {
   const { bars, ratings, profiles, settings } = useStore();
   const scored = bars
-    .filter(isVisited)
+    .filter(isRateable)
     .map((b) => scoreBar(b, ratings, profiles, settings))
     .sort((a, b) => (b.total ?? -1) - (a.total ?? -1));
 

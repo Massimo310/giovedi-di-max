@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { CATEGORIES } from '../lib/categories';
-import { isThursday, isVisited, prettyDate } from '../lib/dates';
+import { isRateable, isThursday, prettyDate } from '../lib/dates';
 import { fmtScore, scoreBar, weightOf } from '../lib/scoring';
 import { MAX_VOTE, ROLE_LABEL, canVote, isAdmin, type Scores } from '../lib/types';
 import { useStore } from '../store';
@@ -25,7 +25,8 @@ export default function BarDetail({ barId, onClose }: { barId: string; onClose: 
 
   if (!bar || !me) return null;
   const s = scoreBar(bar, ratings, profiles, settings);
-  const visited = isVisited(bar);
+  const visited = isRateable(bar);
+  const special = bar.votable === false;
   const admin = isAdmin(me.role);
   const others = ratings.filter((r) => r.bar_id === barId);
   const nameOf = (id: string | null) => profiles.find((p) => p.id === id)?.name ?? '—';
@@ -42,12 +43,13 @@ export default function BarDetail({ barId, onClose }: { barId: string; onClose: 
 
         {!edit ? (
           <header className="detail-head">
-            <Pint value={s.total} size={64} />
+            {special ? <span className="special-mug" aria-hidden>🍻</span> : <Pint value={s.total} size={64} />}
             <div>
               <h2>{bar.name}</h2>
               <p className="muted">{prettyDate(bar.scheduled_date)}{bar.address && <> · {bar.address}</>}</p>
               <p className="muted small">Proposto da {nameOf(bar.added_by)}</p>
               <div className="row">
+                {special && <span className="chip special">Serata speciale · niente voti</span>}
                 {bar.has_foosball && <span className="chip foos">⚽ Biliardino +{settings.foosball_bonus}</span>}
                 {visited && <span className="chip">Punteggio {fmtScore(s.total)}</span>}
               </div>
@@ -63,6 +65,9 @@ export default function BarDetail({ barId, onClose }: { barId: string; onClose: 
             <button className="btn ghost sm" onClick={() => setEdit(true)}>✏️ Modifica</button>
             <button className="btn ghost sm" onClick={() => run(() => api.updateBar(bar.id, { has_foosball: !bar.has_foosball }))}>
               {bar.has_foosball ? 'Togli biliardino' : '⚽ Ha il biliardino'}
+            </button>
+            <button className="btn ghost sm" onClick={() => run(() => api.updateBar(bar.id, { votable: special }))}>
+              {special ? '🗳️ Rendi votabile' : '🍻 Serata senza voto'}
             </button>
             <button
               className="btn danger sm"
@@ -112,7 +117,10 @@ export default function BarDetail({ barId, onClose }: { barId: string; onClose: 
           </section>
         )}
 
-        {!visited && <p className="muted">Si potrà votare dalla sera di {prettyDate(bar.scheduled_date)}.</p>}
+        {special && (
+          <p className="special-note">Qui non si vota: il Bruto non si giudica, si ricorda. 🍻</p>
+        )}
+        {!special && !visited && <p className="muted">Si potrà votare dalla sera di {prettyDate(bar.scheduled_date)}.</p>}
 
         {visited && others.length > 0 && (
           <section>
