@@ -9,6 +9,7 @@ import AddBar from './components/AddBar';
 import AdminPanel from './components/AdminPanel';
 import BarDetail from './components/BarDetail';
 import Bubbles from './components/Bubbles';
+import AccountModal from './components/AccountModal';
 
 type Tab = 'calendario' | 'classifica' | 'admin';
 
@@ -16,6 +17,7 @@ function Shell() {
   const { me, loading, error, setError } = useStore();
   const [tab, setTab] = useState<Tab>('calendario');
   const [openBar, setOpenBar] = useState<string | null>(null);
+  const [account, setAccount] = useState(false);
 
   if (loading) return <div className="center"><div className="pour" aria-label="Caricamento" /></div>;
   if (!me) return <Login />;
@@ -30,7 +32,7 @@ function Shell() {
           </h1>
           <div className="who">
             <span className={`badge role-${me.role}`}>{ROLE_LABEL[me.role]}</span>
-            <span className="who-name">{me.name}</span>
+            <button className="who-name" onClick={() => setAccount(true)} title="Il mio account">👤 {me.name}</button>
             <button className="btn ghost sm" onClick={() => api.signOut()}>Esci</button>
           </div>
         </div>
@@ -66,6 +68,7 @@ function Shell() {
         {tab === 'admin' && isAdmin(me.role) && <AdminPanel onOpen={setOpenBar} />}
       </main>
 
+      {account && <AccountModal onClose={() => setAccount(false)} />}
       {openBar && <BarDetail barId={openBar} onClose={() => setOpenBar(null)} />}
       <footer className="footer">Prosit! 🍻 Fatto con amore e luppolo</footer>
     </>

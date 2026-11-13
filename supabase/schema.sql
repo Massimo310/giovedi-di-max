@@ -9,6 +9,7 @@ create type public.user_role as enum ('admin', 'fedelissimo', 'occasionale', 'os
 create table public.profiles (
   id uuid primary key references auth.users on delete cascade,
   name text not null,
+  username text unique,
   role public.user_role not null default 'ospite',
   created_at timestamptz not null default now()
 );
@@ -25,11 +26,14 @@ create table public.bars (
   created_at timestamptz not null default now()
 );
 
--- Voti: un voto per persona per bar. "scores" è un JSON {categoria: 1..5}
+-- Voti: un voto per persona per bar. "scores" è un JSON {categoria: 1..10}
 create table public.ratings (
   bar_id uuid references public.bars on delete cascade,
   user_id uuid references public.profiles on delete cascade,
-  scores jsonb not null,
+  scores jsonb not null check (
+    jsonb_typeof(scores) = 'object'
+    and not jsonb_path_exists(scores, '$.* ? (@.type() != "number" || @ < 1 || @ > 10)')
+  ),
   comment text not null default '',
   updated_at timestamptz not null default now(),
   primary key (bar_id, user_id)
@@ -39,7 +43,7 @@ create table public.ratings (
 create table public.settings (
   id int primary key default 1 check (id = 1),
   weights jsonb not null default '{"admin":2,"fedelissimo":2,"occasionale":1}',
-  foosball_bonus numeric not null default 0.5
+  foosball_bonus numeric not null default 1
 );
 insert into public.settings (id) values (1);
 
@@ -49,12 +53,17 @@ language sql stable security definer set search_path = public as $$
   select role from public.profiles where id = auth.uid()
 $$;
 
--- Crea il profilo automaticamente alla registrazione (ruolo: ospite)
+-- Crea il profilo automaticamente quando nasce un account (ruolo: ospite).
+-- Gli account li crea il fondatore dall'app (funzione "gestione-utenti").
 create or replace function public.handle_new_user() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
-  insert into public.profiles (id, name)
-  values (new.id, coalesce(nullif(new.raw_user_meta_data->>'name', ''), split_part(new.email, '@', 1)));
+  insert into public.profiles (id, name, username)
+  values (
+    new.id,
+    coalesce(nullif(new.raw_user_meta_data->>'name', ''), split_part(new.email, '@', 1)),
+    coalesce(nullif(new.raw_user_meta_data->>'username', ''), split_part(new.email, '@', 1))
+  );
   return new;
 end $$;
 
@@ -65,7 +74,9 @@ create trigger on_auth_user_created
 create or replace function public.protect_role() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
-  if new.role is distinct from old.role and coalesce(public.my_role()::text, '') <> 'admin' then
+  -- auth.uid() è null per SQL Editor e funzione server: lì è permesso
+  if new.role is distinct from old.role and auth.uid() is not null
+     and coalesce(public.my_role()::text, '') <> 'admin' then
     raise exception 'Solo l''admin può cambiare i ruoli';
   end if;
   return new;
@@ -112,7 +123,12 @@ create policy "admin elimina voti" on public.ratings for delete to authenticated
 create policy "admin impostazioni" on public.settings for update to authenticated using (public.my_role() = 'admin');
 
 -- =====================================================================
---  DOPO esserti registrato nell'app, diventa admin con:
---    update public.profiles set role = 'admin' where name = 'Max';
---  (eseguilo qui nel SQL Editor: da qui il controllo sui ruoli è bypassato)
+--  PRIMO ACCESSO DEL FONDATORE
+--  1. Authentication > Users > Add user > Create new user
+--       email:    max@giovedi-di-max.example.com   (così entri con "max")
+--       password: quella che vuoi  ·  spunta "Auto Confirm User"
+--  2. Poi esegui qui sotto (dal SQL Editor il controllo sui ruoli è bypassato):
+--
+--     update public.profiles set role = 'admin', name = 'Max'
+--     where username = 'max';
 -- =====================================================================

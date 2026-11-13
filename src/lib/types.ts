@@ -4,6 +4,7 @@ export interface Profile {
   id: string;
   name: string;
   role: Role;
+  username?: string | null;
 }
 
 export interface Bar {
@@ -17,7 +18,7 @@ export interface Bar {
   created_at: string;
 }
 
-export type Scores = Record<string, number>; // categoria -> 1..5
+export type Scores = Record<string, number>; // categoria -> 1..10
 
 export interface Rating {
   bar_id: string;
@@ -39,14 +40,14 @@ export interface NewBar {
 }
 
 export const ROLE_LABEL: Record<Role, string> = {
-  admin: 'Mastro Birraio',
+  admin: 'Fondatore',
   fedelissimo: 'Fedelissimo',
   occasionale: 'Occasionale',
   ospite: 'Ospite',
 };
 
 export const ROLE_DESC: Record<Role, string> = {
-  admin: 'Gestisce calendario, bar e utenti',
+  admin: 'Gestisce calendario, bar e compagnia',
   fedelissimo: 'Viene spesso: il suo voto pesa di più',
   occasionale: 'Viene ogni tanto: voto con peso ridotto',
   ospite: 'Può solo guardare classifica e calendario',
@@ -55,3 +56,13 @@ export const ROLE_DESC: Record<Role, string> = {
 export const canVote = (r: Role) => r !== 'ospite';
 export const canAddBar = (r: Role) => r !== 'ospite';
 export const isAdmin = (r: Role) => r === 'admin';
+
+/** Scala dei voti: da 1 a MAX_VOTE boccali */
+export const MAX_VOTE = 10;
+
+export interface NewUser {
+  name: string;
+  username: string;
+  password: string;
+  role: Role;
+}

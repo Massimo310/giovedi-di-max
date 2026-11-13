@@ -14,7 +14,7 @@ interface DB {
   session: string | null;
 }
 
-const KEY = 'giovedi-di-max:demo:v1';
+const KEY = 'giovedi-di-max:demo:v2';
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 function thursdayOffset(weeks: number) {
@@ -25,11 +25,11 @@ function thursdayOffset(weeks: number) {
 
 function seed(): DB {
   const profiles: Profile[] = [
-    { id: 'max', name: 'Max', role: 'admin' },
-    { id: 'luca', name: 'Luca', role: 'fedelissimo' },
-    { id: 'giulia', name: 'Giulia', role: 'fedelissimo' },
-    { id: 'marco', name: 'Marco', role: 'occasionale' },
-    { id: 'ospite', name: 'Ospite curioso', role: 'ospite' },
+    { id: 'max', username: 'max', name: 'Max', role: 'admin' },
+    { id: 'luca', username: 'luca', name: 'Luca', role: 'fedelissimo' },
+    { id: 'giulia', username: 'giulia', name: 'Giulia', role: 'fedelissimo' },
+    { id: 'marco', username: 'marco', name: 'Marco', role: 'occasionale' },
+    { id: 'ospite', username: 'ospite', name: 'Ospite curioso', role: 'ospite' },
   ];
   const now = new Date().toISOString();
   const mk = (id: string, name: string, address: string, w: number, foos: boolean, by: string): Bar => ({
@@ -44,7 +44,7 @@ function seed(): DB {
   ];
   const r = (bar_id: string, user_id: string, vals: number[], comment = ''): Rating => ({
     bar_id, user_id, comment, updated_at: now,
-    scores: Object.fromEntries(CATEGORIES.map((c, i) => [c.key, vals[i]])),
+    scores: Object.fromEntries(CATEGORIES.map((c, i) => [c.key, Math.min(10, vals[i] * 2 - ((i + user_id.length) % 2))])),
   });
   const ratings = [
     r('b1', 'max', [4, 4, 5, 5, 4, 4], 'Biliardino storico, tornei epici'),
@@ -99,12 +99,8 @@ export function createDemoApi(): Api {
     async signIn() {
       throw new Error('In modalità demo scegli un utente dalla lista');
     },
-    async signUp(_e, _p, name) {
-      const p: Profile = { id: uid(), name, role: 'ospite' };
-      db.profiles.push(p);
-      db.session = p.id;
-      save();
-      emit();
+    async changeMyPassword() {
+      need();
     },
     async signOut() {
       db.session = null;
@@ -128,6 +124,23 @@ export function createDemoApi(): Api {
       if (need().role !== 'admin') throw new Error('Solo l’admin può cambiare i ruoli');
       const p = db.profiles.find((x) => x.id === id);
       if (p) p.role = role;
+      save();
+    },
+    async createUser(u) {
+      if (need().role !== 'admin') throw new Error('Solo il fondatore può aggiungere persone');
+      if (db.profiles.some((p) => p.username === u.username)) throw new Error('Nome utente già usato');
+      db.profiles.push({ id: uid(), name: u.name, role: u.role, username: u.username });
+      save();
+    },
+    async resetUserPassword() {
+      if (need().role !== 'admin') throw new Error('Solo il fondatore può farlo');
+    },
+    async deleteUser(id) {
+      const u = need();
+      if (u.role !== 'admin') throw new Error('Solo il fondatore può farlo');
+      if (id === u.id) throw new Error('Non puoi eliminare te stesso');
+      db.profiles = db.profiles.filter((p) => p.id !== id);
+      db.ratings = db.ratings.filter((r) => r.user_id !== id);
       save();
     },
     async listBars() {

@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { prettyDate } from '../lib/dates';
-import { ROLE_DESC, ROLE_LABEL, type Role, type Settings } from '../lib/types';
+import { ROLE_LABEL, type Settings } from '../lib/types';
+import Crew from './Crew';
 import { useStore } from '../store';
 
-const ROLES: Role[] = ['admin', 'fedelissimo', 'occasionale', 'ospite'];
-
 export default function AdminPanel({ onOpen }: { onOpen: (id: string) => void }) {
-  const { me, profiles, bars, settings, run } = useStore();
+  const { bars, settings, run } = useStore();
   const [draft, setDraft] = useState<Settings>(settings);
   const [saved, setSaved] = useState(false);
   useEffect(() => setDraft(settings), [settings]);
@@ -39,21 +38,7 @@ export default function AdminPanel({ onOpen }: { onOpen: (id: string) => void })
         </div>
       </section>
 
-      <section className="card">
-        <h2>Compagnia</h2>
-        <ul className="users">
-          {profiles.map((p) => (
-            <li key={p.id}>
-              <strong>{p.name}</strong>
-              <select value={p.role} disabled={p.id === me?.id} onChange={(e) => run(() => api.setRole(p.id, e.target.value as Role))}
-                title={ROLE_DESC[p.role]}>
-                {ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
-              </select>
-            </li>
-          ))}
-        </ul>
-        <p className="muted small">I nuovi iscritti entrano come Ospiti: promuovili qui.</p>
-      </section>
+      <Crew />
 
       <section className="card">
         <h2>Tutti i bar</h2>

@@ -6,21 +6,17 @@ import { useStore } from '../store';
 
 export default function Login() {
   const { run, error } = useStore();
-  const [mode, setMode] = useState<'in' | 'up'>('in');
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [info, setInfo] = useState<string | null>(null);
   const [demoUsers, setDemoUsers] = useState<Profile[]>([]);
 
   useEffect(() => {
     if (api.mode === 'demo') api.listProfiles().then(setDemoUsers);
   }, []);
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = await run(() => (mode === 'in' ? api.signIn(email, password) : api.signUp(email, password, name)));
-    if (ok && mode === 'up') setInfo('Account creato! Se richiesto, conferma la mail. Entrerai come Ospite finché Max non ti promuove.');
+    run(() => api.signIn(login, password));
   };
 
   return (
@@ -48,22 +44,18 @@ export default function Login() {
           </>
         ) : (
           <form onSubmit={submit} className="form">
-            {mode === 'up' && (
-              <label>Nome<input value={name} onChange={(e) => setName(e.target.value)} required maxLength={40} /></label>
-            )}
-            <label>Email<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" /></label>
+            <label>
+              Nome utente
+              <input value={login} onChange={(e) => setLogin(e.target.value)} required autoComplete="username" autoCapitalize="none" />
+            </label>
             <label>
               Password
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
-                autoComplete={mode === 'in' ? 'current-password' : 'new-password'} />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
             </label>
-            <button className="btn primary">{mode === 'in' ? 'Entra' : 'Crea account'}</button>
-            <button type="button" className="link" onClick={() => setMode(mode === 'in' ? 'up' : 'in')}>
-              {mode === 'in' ? 'Non hai un account? Registrati' : 'Hai già un account? Entra'}
-            </button>
+            <button className="btn primary">Entra</button>
+            <p className="muted small">Non hai un account? Chiedi a Max: gli account li crea lui.</p>
           </form>
         )}
-        {info && <p className="ok">{info}</p>}
         {error && <p className="err">{error}</p>}
       </div>
     </div>

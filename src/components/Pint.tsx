@@ -1,5 +1,7 @@
+import { MAX_VOTE } from '../lib/types';
+
 // Bicchiere che si riempie in base al punteggio (0..max)
-export default function Pint({ value, max = 5.5, size = 56 }: { value: number | null; max?: number; size?: number }) {
+export default function Pint({ value, max = MAX_VOTE, size = 56 }: { value: number | null; max?: number; size?: number }) {
   const pct = value === null ? 0 : Math.max(0, Math.min(1, value / max));
   const top = 8 + (1 - pct) * 50; // y della superficie della birra
   const id = `pint-${Math.random().toString(36).slice(2, 7)}`;

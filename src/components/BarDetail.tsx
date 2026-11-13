@@ -3,7 +3,7 @@ import { api } from '../lib/api';
 import { CATEGORIES } from '../lib/categories';
 import { isThursday, isVisited, prettyDate } from '../lib/dates';
 import { fmtScore, scoreBar, weightOf } from '../lib/scoring';
-import { ROLE_LABEL, canVote, isAdmin, type Scores } from '../lib/types';
+import { MAX_VOTE, ROLE_LABEL, canVote, isAdmin, type Scores } from '../lib/types';
 import { useStore } from '../store';
 import MugRating from './MugRating';
 import Pint from './Pint';
@@ -82,7 +82,7 @@ export default function BarDetail({ barId, onClose }: { barId: string; onClose: 
                 return (
                   <div key={c.key} className="cat">
                     <span>{c.emoji} {c.label}</span>
-                    <span className="bar-track"><span className="bar-fill" style={{ width: `${((v ?? 0) / 5) * 100}%` }} /></span>
+                    <span className="bar-track"><span className="bar-fill" style={{ width: `${((v ?? 0) / MAX_VOTE) * 100}%` }} /></span>
                     <strong>{fmtScore(v)}</strong>
                   </div>
                 );

@@ -1,9 +1,11 @@
 // Modalità ONLINE: dati condivisi su Supabase (database + login).
 // Le regole di sicurezza vere stanno nel database (vedi supabase/schema.sql).
-import { createClient } from '@supabase/supabase-js';
+import { createClient, FunctionsHttpError } from '@supabase/supabase-js';
 import type { Api } from './api';
-import { DEFAULT_SETTINGS } from './api';
+import { DEFAULT_SETTINGS, loginToEmail } from './api';
 import type { Bar, Profile, Rating, Settings } from './types';
+
+const PROFILE_COLS = 'id,name,role,username';
 
 export function createSupabaseApi(url: string, key: string): Api {
   const sb = createClient(url, key);
@@ -17,6 +19,21 @@ export function createSupabaseApi(url: string, key: string): Api {
     if (!data.user) throw new Error('Devi entrare prima');
     return data.user.id;
   };
+  // Chiama la funzione server "gestione-utenti" (crea/elimina account, reset password)
+  const manage = async (body: Record<string, unknown>) => {
+    const { error } = await sb.functions.invoke('gestione-utenti', { body });
+    if (error) {
+      let msg = error.message;
+      if (error instanceof FunctionsHttpError) {
+        try {
+          msg = (await error.context.json()).error ?? msg;
+        } catch {
+          /* risposta non JSON */
+        }
+      }
+      throw new Error(msg);
+    }
+  };
 
   return {
     mode: 'supabase',
@@ -24,29 +41,40 @@ export function createSupabaseApi(url: string, key: string): Api {
       const { data } = await sb.auth.getSession();
       const id = data.session?.user.id;
       if (!id) return null;
-      const res = await sb.from('profiles').select('id,name,role').eq('id', id).maybeSingle();
+      const res = await sb.from('profiles').select(PROFILE_COLS).eq('id', id).maybeSingle();
       return (check(res) as Profile | null) ?? null;
     },
     onAuthChange(cb) {
-      const { data } = sb.auth.onAuthStateChange(() => cb());
+      const { data } = sb.auth.onAuthStateChange((event) => {
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') setTimeout(cb, 0);
+      });
       return () => data.subscription.unsubscribe();
     },
-    async signIn(email, password) {
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) throw new Error(error.message);
-    },
-    async signUp(email, password, name) {
-      const { error } = await sb.auth.signUp({ email, password, options: { data: { name } } });
-      if (error) throw new Error(error.message);
+    async signIn(login, password) {
+      const { error } = await sb.auth.signInWithPassword({ email: loginToEmail(login), password });
+      if (error) throw new Error(error.message === 'Invalid login credentials' ? 'Nome utente o password sbagliati' : error.message);
     },
     async signOut() {
       await sb.auth.signOut();
     },
+    async changeMyPassword(password) {
+      const { error } = await sb.auth.updateUser({ password });
+      if (error) throw new Error(error.message);
+    },
     async listProfiles() {
-      return check(await sb.from('profiles').select('id,name,role').order('name')) as Profile[];
+      return check(await sb.from('profiles').select(PROFILE_COLS).order('name')) as Profile[];
     },
     async setRole(id, role) {
       check(await sb.from('profiles').update({ role }).eq('id', id));
+    },
+    async createUser(u) {
+      await manage({ action: 'create', ...u });
+    },
+    async resetUserPassword(id, password) {
+      await manage({ action: 'reset_password', id, password });
+    },
+    async deleteUser(id) {
+      await manage({ action: 'delete', id });
     },
     async listBars() {
       return check(await sb.from('bars').select('*').order('scheduled_date', { nullsFirst: false })) as Bar[];
