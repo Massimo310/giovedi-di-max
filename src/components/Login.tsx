@@ -3,6 +3,8 @@ import { api } from '../lib/api';
 import type { Profile } from '../lib/types';
 import { ROLE_DESC, ROLE_LABEL } from '../lib/types';
 import { useStore } from '../store';
+import Bubbles from './Bubbles';
+import Cap from './Cap';
 
 export default function Login() {
   const { run, error } = useStore();
@@ -21,9 +23,11 @@ export default function Login() {
 
   return (
     <div className="login">
+      <Bubbles variant="hero" count={30} />
       <div className="login-card card">
-        <div className="login-hero" aria-hidden>🍻</div>
-        <h1 className="logo big">Il Giovedì di <em>Max</em></h1>
+        <Cap size={72} />
+        <span className="kicker">Ogni giovedì · un bar nuovo</span>
+        <h1 className="logo big">Il Giovedì di Max</h1>
         <p className="muted">Ogni giovedì un bar nuovo. Voi votate, la schiuma decide.</p>
 
         {api.mode === 'demo' ? (

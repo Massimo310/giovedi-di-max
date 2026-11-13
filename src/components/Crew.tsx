@@ -105,7 +105,7 @@ export default function Crew() {
         <div className="credentials">
           Account creato! Manda queste credenziali al tuo amico:
           <br />Nome utente <code>{created.username}</code> · Password <code>{created.password}</code>
-          <br /><span className="muted small">Potrà cambiarla dal suo profilo (👤 in alto).</span>
+          <br /><span className="muted small">Potrà cambiarla toccando il suo nome in alto.</span>
           <button className="link" onClick={() => setCreated(null)}>ok</button>
         </div>
       )}

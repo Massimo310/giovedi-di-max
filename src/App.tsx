@@ -10,6 +10,7 @@ import AdminPanel from './components/AdminPanel';
 import BarDetail from './components/BarDetail';
 import Bubbles from './components/Bubbles';
 import AccountModal from './components/AccountModal';
+import Cap from './components/Cap';
 
 type Tab = 'calendario' | 'classifica' | 'admin';
 
@@ -25,22 +26,29 @@ function Shell() {
   return (
     <>
       <header className="topbar">
-        <div className="foam" aria-hidden />
+        <Bubbles variant="hero" count={18} />
         <div className="topbar-inner">
-          <h1 className="logo">
-            <span className="logo-mug" aria-hidden>🍺</span> Il Giovedì di <em>Max</em>
-          </h1>
+          <div className="brand">
+            <Cap />
+            <div>
+              <span className="kicker">Ogni giovedì · un bar nuovo</span>
+              <h1 className="logo">Il Giovedì di Max</h1>
+            </div>
+          </div>
           <div className="who">
             <span className={`badge role-${me.role}`}>{ROLE_LABEL[me.role]}</span>
-            <button className="who-name" onClick={() => setAccount(true)} title="Il mio account">👤 {me.name}</button>
-            <button className="btn ghost sm" onClick={() => api.signOut()}>Esci</button>
+            <button className="who-name" onClick={() => setAccount(true)} title="Il mio account">
+              <span className="avatar">{me.name.slice(0, 1).toUpperCase()}</span>
+              <span className="who-label">{me.name}</span>
+            </button>
+            <button className="btn on-dark sm" onClick={() => api.signOut()}>Esci</button>
           </div>
         </div>
         <nav className="tabs">
-          <button className={tab === 'calendario' ? 'on' : ''} onClick={() => setTab('calendario')}>📅 Calendario</button>
-          <button className={tab === 'classifica' ? 'on' : ''} onClick={() => setTab('classifica')}>🏆 Classifica</button>
+          <button className={tab === 'calendario' ? 'on' : ''} onClick={() => setTab('calendario')}>Calendario</button>
+          <button className={tab === 'classifica' ? 'on' : ''} onClick={() => setTab('classifica')}>Classifica</button>
           {isAdmin(me.role) && (
-            <button className={tab === 'admin' ? 'on' : ''} onClick={() => setTab('admin')}>⚙️ Gestione</button>
+            <button className={tab === 'admin' ? 'on' : ''} onClick={() => setTab('admin')}>Gestione</button>
           )}
         </nav>
       </header>
@@ -70,7 +78,10 @@ function Shell() {
 
       {account && <AccountModal onClose={() => setAccount(false)} />}
       {openBar && <BarDetail barId={openBar} onClose={() => setOpenBar(null)} />}
-      <footer className="footer">Prosit! 🍻 Fatto con amore e luppolo</footer>
+      <footer className="footer">
+        <Cap size={28} />
+        <span>Il Giovedì di Max · bevete responsabilmente, votate senza pietà</span>
+      </footer>
     </>
   );
 }
